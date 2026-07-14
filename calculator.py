@@ -7,6 +7,9 @@ def multiply(a, b):
     return a * b
 
 def divide(a, b):
+    if b == 0:
+        return "Cannot divide by zero"
+    
     return a / b
 
 print("===== Python Calculator =====")
@@ -17,8 +20,13 @@ print("4. Divide")
 
 choice = input("Choose an operation (1-4): ")
 
-number1 = float(input("Enter first number: "))
-number2 = float(input("Enter second number: "))
+try:
+    number1 = float(input("Enter first number: "))
+    number2 = float(input("Enter second number: "))
+
+except ValueError:
+    print("Please enter valid numbers")
+    exit()
 
 if choice == "1":
     result = add(number1, number2)
