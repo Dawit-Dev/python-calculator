@@ -1,4 +1,5 @@
 from operations import add, subtract, multiply, divide
+history = []
 
 while True:
     print("===== Python Calculator =====")
@@ -6,12 +7,24 @@ while True:
     print("2. Subtract")
     print("3. Multiply")
     print("4. Divide")
+    print("5. View History")
 
-    choice = input("Choose an operation (1-4): ")
+    choice = input("Choose an operation (1-5): ")
 
-    if choice not in ["1", "2", "3", "4"]:
-        print("Please choose a number between 1 and 4")
+    if choice not in ["1", "2", "3", "4", "5"]:
+        print("Please choose a number between 1 and 5")
         continue
+
+    elif choice == "5":
+        print("===== Calculation History =====")
+
+        if len(history) == 0:
+            print("No calculations yet.")
+
+        else:
+            for item in history:
+                print(item)
+        continue 
 
     try:
         number1 = float(input("Enter first number: "))
@@ -22,15 +35,19 @@ while True:
         continue
 
     if choice == "1":
+        symbol = "+"
         result = add(number1, number2)
 
     elif choice == "2":
+        symbol = "-"
         result = subtract(number1, number2)
 
     elif choice == "3":
+        symbol = "*"
         result = multiply(number1, number2)
 
     elif choice == "4":
+        symbol = "/"
         result = divide(number1, number2)
 
     else:
@@ -38,6 +55,7 @@ while True:
         continue
 
     print("Result:", result)
+    history.append(f"{number1} {symbol} {number2} = {result}")
 
     again = input("Do another calculation? (y/n): ")
 

@@ -1,9 +1,11 @@
-while True:
-    name = input("What is your name? ")
+history = []
 
-    print(f"Hello, {name}!")
+history.append("5 + 3 = 8")
+history.append("10 - 4 = 6")
+history.append("7 * 8 = 56")
 
-    answer = input("Continue? (y/n): ")
+print("===== Calculation History ====="
+      )
 
-    if answer == "n":
-        break
+for item in history:
+    print(item)
