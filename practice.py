@@ -1,11 +1,19 @@
 history = []
 
-history.append("5 + 3 = 8")
-history.append("10 - 4 = 6")
-history.append("7 * 8 = 56")
+# history.append("5 + 3 = 8")
+# history.append("10 - 4 = 6")
+# history.append("7 * 8 = 56")
 
-print("===== Calculation History ====="
-      )
+# print("===== Calculation History ====="
+#       )
 
-for item in history:
-    print(item)
+# for item in history:
+#     print(item)
+
+def get_numbers():
+    return 5, 10
+
+number1, number2 = get_numbers()
+
+print(number1)
+print(number2)

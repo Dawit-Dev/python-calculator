@@ -1,6 +1,16 @@
 from operations import add, subtract, multiply, divide
 history = []
 
+def get_numbers():
+    try:
+        number1 = float(input("Enter first number: "))
+        number2 = float(input("Enter second number: "))
+        return number1, number2
+    
+    except ValueError:
+        print("Please enter valid numbers")
+        return None
+
 while True:
     print("===== Python Calculator =====")
     print("1. Add")
@@ -8,11 +18,13 @@ while True:
     print("3. Multiply")
     print("4. Divide")
     print("5. View History")
+    print("6. Clear History")
+    print("7. Exit")
 
-    choice = input("Choose an operation (1-5): ")
+    choice = input("Choose an operation (1-7): ")
 
-    if choice not in ["1", "2", "3", "4", "5"]:
-        print("Please choose a number between 1 and 5")
+    if choice not in ["1", "2", "3", "4", "5", "6", "7"]:
+        print("Please choose a number between 1 and 7")
         continue
 
     elif choice == "5":
@@ -24,15 +36,23 @@ while True:
         else:
             for item in history:
                 print(item)
-        continue 
-
-    try:
-        number1 = float(input("Enter first number: "))
-        number2 = float(input("Enter second number: "))
-
-    except ValueError:
-        print("Please enter a valid numbers")
         continue
+
+    elif choice == "6":
+        history.clear()
+        print("History cleared.")
+        continue
+
+    elif choice == "7":
+        print("Thank you for using the calculator!")
+        break
+
+    numbers = get_numbers()
+
+    if numbers is None:
+        continue
+
+    number1, number2 = numbers
 
     if choice == "1":
         symbol = "+"
@@ -56,9 +76,3 @@ while True:
 
     print("Result:", result)
     history.append(f"{number1} {symbol} {number2} = {result}")
-
-    again = input("Do another calculation? (y/n): ")
-
-    if again.lower() != "y":
-        print("Thank you for using the calculator!")
-        break
