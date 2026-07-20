@@ -30,6 +30,10 @@ def show_history(history):
         for item in history:
             print(item)
 
+def clear_history(history):
+    history.clear()
+    print("History cleared.")
+
 while True:
         show_menu()
 
@@ -45,8 +49,7 @@ while True:
             continue
 
         elif choice == "6":
-            history.clear()
-            print("History cleared.")
+            clear_history(history)
             continue
 
         elif choice == "7":
