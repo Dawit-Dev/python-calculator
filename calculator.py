@@ -1,6 +1,7 @@
 from operations import add, subtract, multiply, divide
+from history_manager import save_history, load_history
 
-history = []
+history = load_history()
 
 def show_menu():
         print("===== Python Calculator =====")
@@ -85,6 +86,7 @@ def main():
 
             print("Result:", result)
             history.append(f"{number1} {symbol} {number2} = {result}")
+            save_history(history)
 
 if __name__ == "__main__":
     main()
