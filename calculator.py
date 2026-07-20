@@ -21,6 +21,15 @@ def show_menu():
         print("6. Clear History")
         print("7. Exit")
 
+def show_history(history):
+    print("===== Calculation History =====")
+
+    if len(history) == 0:
+        print("No calculations yet.")
+    else:
+        for item in history:
+            print(item)
+
 while True:
         show_menu()
 
@@ -32,14 +41,7 @@ while True:
             continue
 
         elif choice == "5":
-            print("===== Calculation History =====")
-
-            if len(history) == 0:
-                print("No calculations yet.")
-
-            else:
-                for item in history:
-                    print(item)
+            show_history(history)
             continue
 
         elif choice == "6":
