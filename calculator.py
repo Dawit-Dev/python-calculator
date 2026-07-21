@@ -3,6 +3,10 @@ from history_manager import save_history, load_history
 
 history = load_history()
 
+def format_number(number):
+    if number.is_integer():
+        return int(number)
+    return number
 def show_menu():
         print("===== Python Calculator =====")
         print("1. Add")
@@ -84,6 +88,9 @@ def main():
                 print("Invalid choice")
                 continue
 
+            number1 =format_number(number1)
+            number2 =format_number(number2)
+            result =format_number(result)
             print("Result:", result)
             history.append(f"{number1} {symbol} {number2} = {result}")
             save_history(history)
