@@ -1,12 +1,9 @@
 from operations import add, subtract, multiply, divide
 from history_manager import save_history, load_history
+from utils import format_number
 
 history = load_history()
 
-def format_number(number):
-    if number.is_integer():
-        return int(number)
-    return number
 def show_menu():
         print("===== Python Calculator =====")
         print("1. Add")
