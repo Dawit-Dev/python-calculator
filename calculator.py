@@ -13,6 +13,15 @@ def show_menu():
         print("5. View History")
         print("6. Clear History")
         print("7. Exit")
+
+def get_choice():
+    while True:
+        choice = input("Choose an operation (1-7): ")
+
+        if choice in ["1", "2", "3", "4", "5", "6", "7"]:
+            return choice
+        
+        print("Invalid choice. Please enter a number between 1 and 7.")
 def get_numbers():
     while True:
         try:
@@ -40,7 +49,7 @@ def main():
             show_menu()
 
 
-            choice = input("Choose an operation (1-7): ")
+            choice = get_choice()
 
             if choice not in ["1", "2", "3", "4", "5", "6", "7"]:
                 print("Please choose a number between 1 and 7")
