@@ -1,7 +1,6 @@
 from operations import add, subtract, multiply, divide
 from history_manager import save_history, load_history
-from utils import format_number
-
+from utils import format_number, get_timestamp
 history = load_history()
 
 def show_menu():
@@ -97,8 +96,14 @@ def main():
             number1 =format_number(number1)
             number2 =format_number(number2)
             result =format_number(result)
+
             print("Result:", result)
-            history.append(f"{number1} {symbol} {number2} = {result}")
+
+            timestamp = get_timestamp()
+
+            history.append(
+                f"{timestamp} | {number1} {symbol} {number2} = {result}"
+                )
             save_history(history)
 
 if __name__ == "__main__":
