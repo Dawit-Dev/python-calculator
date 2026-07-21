@@ -14,14 +14,14 @@ def show_menu():
         print("6. Clear History")
         print("7. Exit")
 def get_numbers():
-    try:
-        number1 = float(input("Enter first number: "))
-        number2 = float(input("Enter second number: "))
-        return number1, number2
-    
-    except ValueError:
-        print("Please enter valid numbers")
-        return None
+    while True:
+        try:
+            number1 = float(input("Enter first number: "))
+            number2 = float(input("Enter second number: "))
+            return number1, number2
+        
+        except ValueError:
+            print("Please enter valid numbers. Try again.")
 def show_history(history):
     print("===== Calculation History =====")
 
