@@ -8,3 +8,6 @@ def format_number(number):
         return int(number)
     
     return number
+
+def format_history_entry(timestamp, number1, symbol, number2, result):
+    return f"{timestamp} | {number1} {symbol} {number2} = {result}"
