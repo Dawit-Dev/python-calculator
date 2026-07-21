@@ -1,6 +1,8 @@
 from operations import add, subtract, multiply, divide
 from history_manager import save_history, load_history
+from history_exporter import export_history
 from utils import format_number, get_timestamp, format_history_entry
+
 history = load_history()
 
 def show_menu():
@@ -11,13 +13,14 @@ def show_menu():
         print("4. Divide")
         print("5. View History")
         print("6. Clear History")
-        print("7. Exit")
+        print("7. Export History")
+        print("8. Exit")
 
 def get_choice():
     while True:
-        choice = input("Choose an operation (1-7): ")
+        choice = input("Choose an operation (1-8): ")
 
-        if choice in ["1", "2", "3", "4", "5", "6", "7"]:
+        if choice in ["1", "2", "3", "4", "5", "6", "7", "8"]:
             return choice
         
         print("Invalid choice. Please enter a number between 1 and 7.")
@@ -50,7 +53,7 @@ def main():
 
             choice = get_choice()
 
-            if choice not in ["1", "2", "3", "4", "5", "6", "7"]:
+            if choice not in ["1", "2", "3", "4", "5", "6", "7", "8"]:
                 print("Please choose a number between 1 and 7")
                 continue
 
@@ -63,8 +66,15 @@ def main():
                 continue
 
             elif choice == "7":
+                export_history(history)
+                print("History exported successfully.")
+                continue
+
+            elif choice == "8":
                 print("Thank you for using the calculator!")
                 break
+
+            
 
             numbers = get_numbers()
 

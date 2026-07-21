@@ -16,3 +16,6 @@ __pycache__/
 
 # Local calculation history
 history.json
+
+# Local exported history
+history.csv
