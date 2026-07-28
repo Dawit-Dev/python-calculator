@@ -1,5 +1,9 @@
 "use client"
+
 import { useState } from "react"
+import Display from "./Display"
+import Button from "./Button"
+import ButtonGrid from "./ButtonGrid"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
@@ -59,24 +63,7 @@ export default function Calculator() {
     setExpression("")
   }
 
-  const buttons = [
-    "7",
-    "8",
-    "9",
-    "+",
-    "4",
-    "5",
-    "6",
-    "-",
-    "1",
-    "2",
-    "3",
-    "*",
-    "C",
-    "0",
-    "=",
-    "/",
-  ]
+   
 
   const getButtonStyle = (button: string) => {
     if (button === "=") {
@@ -101,45 +88,18 @@ export default function Calculator() {
           Dawit's Calculator
         </h1>
         <div className='mb-6 rounded-2xl bg-gradient-to-b from-zinc-800 to-black p-6 text-right shadow-2xl'>
-          <div className='min-h-8 text-lg font-medium tracking-wide text-zinc-500'>
-            {expression}
-          </div>
+          <Display expression={expression} display={display} />
 
-          <div className='mb-3 text-6xl font-extrabold tracking-tight text-white'>{display}</div>
-
-          <div className='grid grid-cols-4 gap-3'>
-            {buttons.map((button) => (
-              <button
-                key={button}
-                onClick={() => {
-                  if (button === "C") clear()
-                  else if (button === "=") calculate()
-                  else if (["+", "-", "*", "/"].includes(button))
-                    handleOperation(button)
-                  else handleNumber(button)
-                }}
-                className={`
-                  rounded-xl
-                  p-4
-                  text-xl
-                  font-semibold
-                  cursor-pointer
-                  border
-                  border-zinc-300
-                  shadow-xl
-                  transition-all
-                  duration-150
-                  active:scale-95
-                  active:shadow-[0_2px_0_rgba(0,0,0,0.25)]
-                  hover:scale-105
-                  hover:brightness-110
-                  ${getButtonStyle(button)}
-                `}
-              >
-                {button}
-              </button>
-            ))}
-          </div>
+          <ButtonGrid
+            onButtonClick={(button) => {
+              if (button === "C") clear()
+              else if (button === "=") calculate()
+              else if (["+", "-", "*", "/"].includes(button))
+                handleOperation(button)
+              else handleNumber(button)
+            }}
+            getButtonStyle={getButtonStyle}
+          />
         </div>
       </div>
     </main>
