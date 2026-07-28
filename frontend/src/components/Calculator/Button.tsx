@@ -18,6 +18,7 @@ export default function Button({ label, onClick, className }: ButtonProps) {
             transition-all
             duration-150
             hover:brightness-110
+            hover:scale-105
             active:translate-y-1
             active:shadow-md
             ${className}

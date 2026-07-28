@@ -2,8 +2,8 @@
 
 import { useState } from "react"
 import Display from "./Display"
-import Button from "./Button"
 import ButtonGrid from "./ButtonGrid"
+import { calculate } from "@/lib/calculatorApi"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
@@ -30,21 +30,13 @@ export default function Calculator() {
     setDisplay("0")
   }
 
-  const calculate = async () => {
+  const handleCalculate = async () => {
     try {
-      const response = await fetch("http://127.0.0.1:8000/calculate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          first: Number(previousValue),
-          operation: operation,
-          second: Number(display),
-        }),
-      })
-
-      const data = await response.json()
+      const data = await calculate(
+        Number(previousValue),
+        operation,
+        Number(display)
+      )
 
       setExpression(expression + " =")
       setDisplay(String(data.result))
@@ -78,7 +70,7 @@ export default function Calculator() {
       return "bg-orange-500 text-white hover:bg-orange-600"
     }
 
-    return "bg-zinc-100 text-zinc-900 hover:bg-white shadow-inner"
+    return "bg-zinc-100 text-zinc-900 hover:bg-white"
   }
 
   return (
@@ -93,7 +85,7 @@ export default function Calculator() {
           <ButtonGrid
             onButtonClick={(button) => {
               if (button === "C") clear()
-              else if (button === "=") calculate()
+              else if (button === "=") handleCalculate()
               else if (["+", "-", "*", "/"].includes(button))
                 handleOperation(button)
               else handleNumber(button)
