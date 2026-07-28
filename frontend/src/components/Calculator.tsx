@@ -91,7 +91,7 @@ export default function Calculator() {
       return "bg-orange-500 text-white hover:bg-orange-600"
     }
 
-    return "bg-zinc-200 text-black hover:bg-zinc-300"
+    return "bg-zinc-100 text-zinc-900 hover:bg-white shadow-inner"
   }
 
   return (
@@ -100,12 +100,12 @@ export default function Calculator() {
         <h1 className='mb-6 text-center text-2xl font-bold text-zinc-900'>
           Dawit's Calculator
         </h1>
-        <div className='mb-6 rounded-xl bg-zinc-900 p-5 text-right'>
-          <div className='min-h-8 text-lg font-medium text-zinc-400'>
+        <div className='mb-6 rounded-2xl bg-gradient-to-b from-zinc-800 to-black p-6 text-right shadow-2xl'>
+          <div className='min-h-8 text-lg font-medium tracking-wide text-zinc-500'>
             {expression}
           </div>
 
-          <div className='mb-3 text-5xl font-bold text-white'>{display}</div>
+          <div className='mb-3 text-6xl font-extrabold tracking-tight text-white'>{display}</div>
 
           <div className='grid grid-cols-4 gap-3'>
             {buttons.map((button) => (
@@ -118,9 +118,23 @@ export default function Calculator() {
                     handleOperation(button)
                   else handleNumber(button)
                 }}
-                className={`rounded-xl p-4 text-xl font-semibold transition-all duration-150 ${getButtonStyle(
-                  button
-                )}`}
+                className={`
+                  rounded-xl
+                  p-4
+                  text-xl
+                  font-semibold
+                  cursor-pointer
+                  border
+                  border-zinc-300
+                  shadow-xl
+                  transition-all
+                  duration-150
+                  active:scale-95
+                  active:shadow-[0_2px_0_rgba(0,0,0,0.25)]
+                  hover:scale-105
+                  hover:brightness-110
+                  ${getButtonStyle(button)}
+                `}
               >
                 {button}
               </button>
