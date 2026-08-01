@@ -23,3 +23,12 @@ export async function calculate(
 
     return response.json()
 }
+
+export async function getHistory() {
+    const response = await fetch(`${API_URL}/history`)
+
+    if (!response.ok) {
+        throw new Error("Failed to fetch history")
+    }
+    return response.json()
+}

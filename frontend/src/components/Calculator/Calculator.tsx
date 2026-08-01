@@ -1,9 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Display from "./Display"
 import ButtonGrid from "./ButtonGrid"
-import { calculate } from "@/lib/calculatorApi"
+import { calculate, getHistory } from "@/lib/calculatorApi"
+import History from "./History"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
@@ -11,6 +12,20 @@ export default function Calculator() {
   const [operation, setOperation] = useState("")
   const [expression, setExpression] = useState("")
   const [newCalculation, setNewCalculation] = useState(false)
+  const [history, setHistory] = useState([])
+
+  const loadHistory = async () => {
+    try {
+      const data = await getHistory()
+      setHistory(data)
+    } catch (error) {
+      console.error("Failed to load history", error)
+    }
+  }
+
+  useEffect(() => {
+    loadHistory()
+  }, [])
 
   const handleNumber = (number: string) => {
     if (newCalculation) {
@@ -43,6 +58,8 @@ export default function Calculator() {
       setPreviousValue("")
       setOperation("")
       setNewCalculation(true)
+
+      await loadHistory()
     } catch (error) {
       setDisplay("Error")
     }
@@ -77,8 +94,11 @@ export default function Calculator() {
     <main className='flex min-h-screen items-center justify-center bg-zinc-200 p-6'>
       <div className='w-full max-w-sm'>
         <h1 className='mb-6 text-center text-2xl font-bold text-zinc-900'>
-          Dawit's Calculator
+          CalcFlow
         </h1>
+        <p className="mb-6 text-center text-sm tracking-wide text-zinc-600">
+          Simple . Fast . Accurate
+        </p>
         <div className='mb-6 rounded-2xl bg-gradient-to-b from-zinc-800 to-black p-6 text-right shadow-2xl'>
           <Display expression={expression} display={display} />
 
@@ -92,6 +112,8 @@ export default function Calculator() {
             }}
             getButtonStyle={getButtonStyle}
           />
+
+          <History history={history} />
         </div>
       </div>
     </main>
