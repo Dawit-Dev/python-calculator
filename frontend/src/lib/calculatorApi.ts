@@ -1,8 +1,13 @@
 import type { HistoryItem } from "@/types/calculator"
+import { ApiError } from "next/dist/server/api-utils"
 
 type HistoryResponse = HistoryItem[]
 
-const API_URL = "http://127.0.0.1:8000"
+const API_URL = process.env.NEXT_PUBLIC_API_URL
+
+if (!API_URL) {
+    throw new Error("API URL is missing")
+}
 
 type CalculationResponse = {
     result: number
