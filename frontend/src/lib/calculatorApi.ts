@@ -1,12 +1,18 @@
-import { error } from "console"
+import type { HistoryItem } from "@/types/calculator"
+
+type HistoryResponse = HistoryItem[]
 
 const API_URL = "http://127.0.0.1:8000"
+
+type CalculationResponse = {
+    result: number
+}
 
 export async function calculate(
     first: number,
     operation: string,
     second: number
-) {
+): Promise<CalculationResponse> {
     const response = await fetch(`${API_URL}/calculate`, {
         method: "POST",
         headers: {
@@ -26,7 +32,7 @@ export async function calculate(
     return response.json()
 }
 
-export async function getHistory() {
+export async function getHistory(): Promise<HistoryResponse> {
     const response = await fetch(`${API_URL}/history`)
 
     if (!response.ok) {
@@ -35,7 +41,7 @@ export async function getHistory() {
     return response.json()
 }
 
-export async function clearHistory() {
+export async function clearHistory(): Promise<{ message: string }> {
     const response = await fetch(`${API_URL}/history`, {
         method: "DELETE",
     })

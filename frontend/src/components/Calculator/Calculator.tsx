@@ -5,6 +5,7 @@ import Display from "./Display"
 import ButtonGrid from "./ButtonGrid"
 import { calculate, getHistory, clearHistory } from "@/lib/calculatorApi"
 import History from "./History"
+import type { HistoryItem  } from "@/types/calculator"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
@@ -12,11 +13,11 @@ export default function Calculator() {
   const [operation, setOperation] = useState("")
   const [expression, setExpression] = useState("")
   const [newCalculation, setNewCalculation] = useState(false)
-  const [history, setHistory] = useState([])
+  const [history, setHistory] = useState<HistoryItem[]>([])
 
   const loadHistory = async () => {
     try {
-      const data = await getHistory()
+      const data: HistoryItem[] = await getHistory()
       setHistory(data)
     } catch (error) {
       console.error("Failed to load history", error)

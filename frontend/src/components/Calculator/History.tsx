@@ -1,11 +1,6 @@
 "use client"
 
-type HistoryItem = {
-  first: number
-  operation: string
-  second: number
-  result: number
-}
+import type { HistoryItem } from "@/types/calculator"
 
 type HistoryProps = {
     history: HistoryItem[]
