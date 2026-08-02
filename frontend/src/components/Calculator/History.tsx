@@ -8,15 +8,29 @@ type HistoryItem = {
 }
 
 type HistoryProps = {
-  history: HistoryItem[]
+    history: HistoryItem[]
+    onClearHistory: () => void
 }
 
-export default function History({ history }: HistoryProps) {
+export default function History({
+    history,
+    onClearHistory,
+}: HistoryProps) {
   return (
     <div className='mt-6 border-t border-zinc-700 pt-4'>
-      <h2 className='mb-3 text-left text-sm font-semibold uppercase tracking-wide text-zinc-400'>
-        History
-      </h2>
+      <div className='mb-3 flex items-center justify-between'>
+        <h2 className='text-sm font-semibold uppercase tracking-wide text-zinc-400'>
+          History
+        </h2>
+        {history.length > 0 && (
+          <button
+            onClick={onClearHistory}
+            className='cursor-pointer rounded-md bg-red-500 px-2 py-1 text-xs font-semibold text-white transition hover:bg-red-600'
+          >
+            Clear
+          </button>
+        )}
+      </div>
 
       {history.length === 0 ? (
         <p className='text-left text-sm text-zinc-500'>No calculations yet.</p>

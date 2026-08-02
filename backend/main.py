@@ -62,3 +62,12 @@ def calculate(request: CalculationRequest):
 @app.get("/history", response_model=List[Dict[str, Any]])
 def get_history():
     return history
+
+@app.delete("/history")
+def clear_history():
+    history.clear()
+    save_history(history)
+
+    return {
+        "message": "History cleared"
+    }

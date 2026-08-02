@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Display from "./Display"
 import ButtonGrid from "./ButtonGrid"
-import { calculate, getHistory } from "@/lib/calculatorApi"
+import { calculate, getHistory, clearHistory } from "@/lib/calculatorApi"
 import History from "./History"
 
 export default function Calculator() {
@@ -65,6 +65,20 @@ export default function Calculator() {
     }
   }
 
+  const handleClearHistory = async () => {
+    try {
+      await clearHistory()
+      
+      setHistory([])
+      setDisplay("0")
+      setExpression("")
+      setPreviousValue("")
+      setNewCalculation(false)
+    } catch (error) {
+      console.error("Failed to clear history", error)
+    }
+  }
+
   const clear = () => {
     setDisplay("0")
     setPreviousValue("")
@@ -113,7 +127,10 @@ export default function Calculator() {
             getButtonStyle={getButtonStyle}
           />
 
-          <History history={history} />
+          <History
+            history={history}
+            onClearHistory={handleClearHistory}
+          />
         </div>
       </div>
     </main>
