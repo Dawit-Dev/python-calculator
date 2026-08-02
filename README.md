@@ -60,6 +60,20 @@ CalcFlow provides a clean and responsive calculator interface with a FastAPI bac
 - REST API
 - npm
 
+## Screenshots
+
+### Calculator Interface
+
+![CalcFlow Calculator](screenshots/calculator.png)
+
+### Calculation History
+
+![CalcFlow History](screenshots/history.png)
+
+### Empty History State
+
+![CalcFlow Empty History](screenshots/empty-history.png)
+
 ## Project Structure
 
 ```text
@@ -97,6 +111,56 @@ python-calculator/
 ├── README.md
 └── .gitignore
 ```
+
+
+## How to Run
+
+### Backend
+
+Install Python dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Start FastAPI server:
+
+```bash
+uvicorn backend.main:app --reload
+```
+
+Backend runs at:
+
+```text
+http://127.0.0.1:8000
+```
+
+### Frontend
+
+Go to the frontend folder:
+
+```bash
+cd frontend
+```
+
+Install packages:
+
+```bash
+npm install
+```
+
+Start Next.js:
+
+```bash
+npm run dev
+```
+
+Frontend runs at:
+
+```text
+http://localhost:3000
+```
+
 ## Author
 
 Dawit Abraha
