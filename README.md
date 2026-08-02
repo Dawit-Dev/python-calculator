@@ -1,78 +1,102 @@
-# Python Calculator
+# CalcFlow
 
-A simple command-line calculator built with Python.  
-The project demonstrates modular programming, file handling, error handling, and automated testing using pytest.
+A modern full-stack calculator application built with **Next.js, TypeScript, FastAPI, and Python**.
+
+CalcFlow provides a clean and responsive calculator interface with a FastAPI backend, persistent calculation history, and a modular architecture designed with scalability in mind.
 
 ## Features
+
+### Calculator
 
 - Addition
 - Subtraction
 - Multiplication
 - Division
+- Fast arithmetic calculations through a REST API
 - Input validation
 - Division by zero protection
-- Continuous calculator loop
-- Perform multiple calculations without restarting the program
-- View calculation history
-- Save calculation history using JSON
-- Clear calculation history
 - Clean number formatting
-- Automated tests using pytest
+- Responsive calculator interface
+
+### Calculation History
+
+- Automatically saves completed calculations
+- View previous calculations
+- Persistent history storage using JSON
+- Clear calculation history
+- Scrollable history panel
+- Latest calculations displayed first
+
+### User Interface
+
+- Modern responsive design
+- Built with reusable React components
+- Interactive calculator buttons
+- Hover and click animations
+- Clean dark calculator display
+- Mobile-friendly layout
 
 ## Technologies
 
-- Python 3
-- Pytest
-- JSON
+### Frontend
+
+- Next.js
+- React
+- TypeScript
+- Tailwind CSS
+
+### Backend
+
+- Python
+- FastAPI
+- Pydantic
+- JSON file storage
+
+### Tools
+
 - Git
 - GitHub
 - VS Code
-
-## How to Run
-
-Clone the repository and run:
-
-```bash
-python3 calculator.py
-```
-
-## Running Tests
-
-Run the test suite with:
-
-```bash
-pytest
-```
-
-Current tests cover:
-
-- Calculator operations
-- History saving and loading
-- Missing history files
-- Number formatting
-- User input validation
-- Edge cases
+- REST API
+- npm
 
 ## Project Structure
 
 ```text
 python-calculator/
+
 │
-├── calculator.py
-├── operations.py
-├── history_manager.py
-├── utils.py
+├── backend/
+│   ├── main.py
+│   ├── calculator.py
+│   ├── operations.py
+│   ├── history_manager.py
+│   ├── history_exporter.py
+│   └── utils.py
 │
-├── tests/
-│   ├── test_calculator.py
-│   ├── test_operations.py
-│   ├── test_history_manager.py
-│   └── test_utils.py
+├── frontend/
+│   ├── src/
+│   │   ├── app/
+│   │   ├── components/
+│   │   │   └── Calculator/
+│   │   │       ├── Calculator.tsx
+│   │   │       ├── Display.tsx
+│   │   │       ├── Button.tsx
+│   │   │       ├── ButtonGrid.tsx
+│   │   │       └── History.tsx
+│   │   │
+│   │   ├── lib/
+│   │   │   └── calculatorApi.ts
+│   │   │
+│   │   └── types/
+│   │       └── calculator.ts
+│   │
+│   └── package.json
 │
+├── history.json
 ├── README.md
 └── .gitignore
 ```
-
 ## Author
 
 Dawit Abraha
