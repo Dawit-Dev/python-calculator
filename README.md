@@ -81,6 +81,7 @@ python-calculator/
 
 │
 ├── backend/
+│   ├── .env.example
 │   ├── main.py
 │   ├── calculator.py
 │   ├── operations.py
@@ -108,6 +109,7 @@ python-calculator/
 │   └── package.json
 │
 ├── history.json
+├── requirements.txt
 ├── README.md
 └── .gitignore
 ```
@@ -116,6 +118,12 @@ python-calculator/
 ## How to Run
 
 ### Backend
+
+Copy the example environment file:
+
+```bash
+cp backend/.env.example backend/.env
+```
 
 Install Python dependencies:
 
