@@ -5,7 +5,9 @@ import Display from "./Display"
 import ButtonGrid from "./ButtonGrid"
 import { calculate, getHistory, clearHistory } from "@/lib/calculatorApi"
 import History from "./History"
-import type { HistoryItem  } from "@/types/calculator"
+import type { HistoryItem } from "@/types/calculator"
+import ModeSelector from "./ModeSelector"
+import ThemeToggle from "./ThemeToggle"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
@@ -15,6 +17,7 @@ export default function Calculator() {
   const [newCalculation, setNewCalculation] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [liveResult, setLiveResult] = useState("")
+  const [mode, setMode] = useState("standard")
 
   const loadHistory = async () => {
     try {
@@ -174,6 +177,11 @@ export default function Calculator() {
           Simple . Fast . Accurate
         </p>
         <div className='mb-6 rounded-2xl bg-gradient-to-b from-zinc-800 to-black p-6 text-right shadow-2xl'>
+          <div className='mb-6 flex items-center justify-between'>
+            <ModeSelector mode={mode} onChange={setMode} />
+
+            <ThemeToggle />
+          </div>
           <Display expression={expression} display={liveResult || display} />
 
           <ButtonGrid
