@@ -12,8 +12,8 @@ from backend.history_manager import save_history, load_history
 load_dotenv()
 
 FRONTEND_URLS = os.getenv(
-    "FRONTEND_URL",
-    "http://localhost:3000"
+    "FRONTEND_URLS",
+    "http://localhost:3000,https://calcflow-app-one.vercel.app"
 ).split(",")
 
 app = FastAPI()
@@ -22,9 +22,11 @@ history = load_history()
 app.add_middleware(
     CORSMiddleware,
     allow_origins=FRONTEND_URLS,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
 class CalculationRequest(BaseModel):
     first: float
     operation: str
