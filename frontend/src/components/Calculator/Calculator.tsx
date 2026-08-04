@@ -8,6 +8,7 @@ import History from "./History"
 import type { HistoryItem } from "@/types/calculator"
 import ModeSelector from "./ModeSelector"
 import ThemeToggle from "./ThemeToggle"
+import { standardButtons } from "@/config/standardButtons"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
@@ -185,6 +186,7 @@ export default function Calculator() {
           <Display expression={expression} display={liveResult || display} />
 
           <ButtonGrid
+            buttons={standardButtons}
             onButtonClick={(button) => {
               if (button === "C") {
                 clear()
