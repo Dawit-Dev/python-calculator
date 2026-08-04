@@ -9,6 +9,8 @@ import type { HistoryItem } from "@/types/calculator"
 import ModeSelector from "./ModeSelector"
 import ThemeToggle from "./ThemeToggle"
 import { standardButtons } from "@/config/standardButtons"
+import { scientificButtons } from "@/config/scientificButtons"
+import { programmerButtons } from "@/config/programmerButtons"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
@@ -168,6 +170,13 @@ export default function Calculator() {
     }
   }
 
+  const buttons =
+    mode === "scientific"
+      ? scientificButtons
+      : mode === "programmer"
+      ? programmerButtons
+      : standardButtons
+
   return (
     <main className='flex min-h-screen items-center justify-center bg-zinc-200 p-6'>
       <div className='w-full max-w-sm'>
@@ -186,7 +195,7 @@ export default function Calculator() {
           <Display expression={expression} display={liveResult || display} />
 
           <ButtonGrid
-            buttons={standardButtons}
+            buttons={buttons}
             onButtonClick={(button) => {
               if (button === "C") {
                 clear()
