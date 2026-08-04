@@ -17,6 +17,7 @@ export default function ButtonGrid({
           key={button.label}
           label={button.label}
           variant={button.variant}
+          size={button.size}
           onClick={() => onButtonClick(button.label)}
         />
       ))}

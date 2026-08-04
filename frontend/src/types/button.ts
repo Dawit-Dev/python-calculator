@@ -8,4 +8,5 @@ export type ButtonVariant =
 export type CalculatorButton = {
   label: string
   variant: ButtonVariant
+  size?: "normal" | "wide" | "extraWide"
 }

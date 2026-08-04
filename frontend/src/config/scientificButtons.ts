@@ -29,5 +29,7 @@ export const scientificButtons: CalculatorButton[] = [
   { label: "C", variant: "action" },
   { label: "0", variant: "number" },
   { label: ".", variant: "number" },
-  { label: "=", variant: "equals" },
+  { label: "⌫", variant: "backspace" },
+  
+  { label: "=", variant: "equals", size: "extraWide" },
 ]

@@ -19,8 +19,8 @@ export const standardButtons: CalculatorButton[] = [
   { label: "C", variant: "action" },
   { label: "0", variant: "number" },
   { label: ".", variant: "number" },
-  { label: "⌫", variant: "backspace" },
-
-  { label: "=", variant: "equals" },
   { label: "/", variant: "operator" },
+  
+  { label: "=", variant: "equals", size: "extraWide" },
+  { label: "⌫", variant: "backspace" },
 ]

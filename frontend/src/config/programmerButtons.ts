@@ -28,6 +28,8 @@ export const programmerButtons: CalculatorButton[] = [
 
   { label: "C", variant: "action" },
   { label: "0", variant: "number" },
-  { label: "=", variant: "equals" },
+  { label: "⌫", variant: "backspace" },
   { label: "+", variant: "operator" },
+  
+  { label: "=", variant: "equals", size: "extraWide" },
 ]

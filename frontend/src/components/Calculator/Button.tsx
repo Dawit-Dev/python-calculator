@@ -3,10 +3,11 @@ import type { ButtonVariant } from "@/types/button"
 type ButtonProps = {
   label: string
   variant: ButtonVariant
+  size?: "normal" | "wide" | "extraWide"
   onClick: () => void
 }
 
-export default function Button({ label, variant, onClick }: ButtonProps) {
+export default function Button({ label, variant, size = "normal", onClick }: ButtonProps) {
   const styles = {
     number: "bg-zinc-100 text-zinc-900 hover:bg-white",
 
@@ -15,8 +16,14 @@ export default function Button({ label, variant, onClick }: ButtonProps) {
     action: "bg-red-500 text-white hover:bg-red-600",
 
     backspace: "bg-purple-500 text-white hover:bg-purple-600",
-    
+
     equals: "bg-blue-500 text-white hover:bg-blue-600",
+  }
+
+  const sizeStyles = {
+    normal: "",
+    wide: "col-span-2",
+    extraWide: "col-span-3",
   }
 
   return (
@@ -36,6 +43,7 @@ export default function Button({ label, variant, onClick }: ButtonProps) {
         active:translate-y-1
         active:shadow-md
         ${styles[variant]}
+        ${sizeStyles[size]}
       `}
     >
       {label}
