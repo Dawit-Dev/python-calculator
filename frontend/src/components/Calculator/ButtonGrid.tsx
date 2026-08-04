@@ -22,6 +22,7 @@ export default function ButtonGrid({ onButtonClick }: ButtonGridProps) {
     { label: "3", variant: "number" },
     { label: "*", variant: "operator" },
 
+    { label: "⌫", variant: "backspace" },
     { label: "C", variant: "action" },
     { label: "0", variant: "number" },
     { label: "=", variant: "equals" },

@@ -3,6 +3,7 @@ export type ButtonVariant =
   | "operator"
   | "action"
   | "equals"
+  | "backspace"
 
 export type CalculatorButton = {
   label: string

@@ -87,13 +87,23 @@ export default function Calculator() {
     setExpression("")
   }
 
+  const handleBackspace = () => {
+    const newDisplay = display.slice(0, -1)
+
+    setDisplay(newDisplay || "0")
+
+    if (expression.length > 0) {
+      setExpression(expression.slice(0, -1))
+    }
+  }
+
   return (
     <main className='flex min-h-screen items-center justify-center bg-zinc-200 p-6'>
       <div className='w-full max-w-sm'>
         <h1 className='mb-6 text-center text-2xl font-bold text-zinc-900'>
           CalcFlow
         </h1>
-        <p className="mb-6 text-center text-sm tracking-wide text-zinc-600">
+        <p className='mb-6 text-center text-sm tracking-wide text-zinc-600'>
           Simple . Fast . Accurate
         </p>
         <div className='mb-6 rounded-2xl bg-gradient-to-b from-zinc-800 to-black p-6 text-right shadow-2xl'>
@@ -101,18 +111,21 @@ export default function Calculator() {
 
           <ButtonGrid
             onButtonClick={(button) => {
-              if (button === "C") clear()
-              else if (button === "=") handleCalculate()
-              else if (["+", "-", "*", "/"].includes(button))
+              if (button === "C") {
+                clear()
+              } else if (button === "⌫") {
+                handleBackspace()
+              } else if (button === "=") {
+                handleCalculate()
+              } else if (["+", "-", "*", "/"].includes(button)) {
                 handleOperation(button)
-              else handleNumber(button)
+              } else {
+                handleNumber(button)
+              }
             }}
           />
 
-          <History
-            history={history}
-            onClearHistory={handleClearHistory}
-          />
+          <History history={history} onClearHistory={handleClearHistory} />
         </div>
       </div>
     </main>

@@ -14,6 +14,8 @@ export default function Button({ label, variant, onClick }: ButtonProps) {
 
     action: "bg-red-500 text-white hover:bg-red-600",
 
+    backspace: "bg-purple-500 text-white hover:bg-purple-600",
+    
     equals: "bg-blue-500 text-white hover:bg-blue-600",
   }
 
