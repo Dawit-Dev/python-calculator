@@ -11,17 +11,17 @@ from backend.history_manager import save_history, load_history
 
 load_dotenv()
 
-FRONTEND_URL = os.getenv(
+FRONTEND_URLS = os.getenv(
     "FRONTEND_URL",
     "http://localhost:3000"
-)
+).split(",")
 
 app = FastAPI()
 history = load_history()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_URL],
+    allow_origins=FRONTEND_URLS,
     allow_methods=["*"],
     allow_headers=["*"],
 )

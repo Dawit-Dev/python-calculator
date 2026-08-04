@@ -87,24 +87,6 @@ export default function Calculator() {
     setExpression("")
   }
 
-   
-
-  const getButtonStyle = (button: string) => {
-    if (button === "=") {
-      return "bg-blue-500 text-white hover:bg-blue-600"
-    }
-
-    if (button === "C") {
-      return "bg-red-500 text-white hover:bg-red-600"
-    }
-
-    if (["+", "-", "*", "/"].includes(button)) {
-      return "bg-orange-500 text-white hover:bg-orange-600"
-    }
-
-    return "bg-zinc-100 text-zinc-900 hover:bg-white"
-  }
-
   return (
     <main className='flex min-h-screen items-center justify-center bg-zinc-200 p-6'>
       <div className='w-full max-w-sm'>
@@ -125,7 +107,6 @@ export default function Calculator() {
                 handleOperation(button)
               else handleNumber(button)
             }}
-            getButtonStyle={getButtonStyle}
           />
 
           <History
