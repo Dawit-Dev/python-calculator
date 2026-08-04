@@ -14,6 +14,7 @@ export default function Calculator() {
   const [expression, setExpression] = useState("")
   const [newCalculation, setNewCalculation] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const [liveResult, setLiveResult] = useState("")
 
   const loadHistory = async () => {
     try {
@@ -29,8 +30,16 @@ export default function Calculator() {
   }, [])
 
   const handleNumber = (number: string) => {
-    if (number === "." && display.includes(".")) {
-      return
+    if (number === ".") {
+      if (display.includes(".")) {
+        return
+      }
+
+      if (display === "0") {
+        setDisplay("0.")
+        setExpression(expression + "0.")
+        return
+      }
     }
 
     if (newCalculation) {
@@ -38,19 +47,73 @@ export default function Calculator() {
       setExpression(number)
       setNewCalculation(false)
     } else {
-      setDisplay(display === "0" ? number : display + number)
+      const newValue = display === "0" ? number : display + number
+
+      setDisplay(newValue)
       setExpression(expression + number)
+
+      updateLiveResult(newValue)
     }
   }
 
-  const handleOperation = (op: string) => {
-    setPreviousValue(display)
-    setOperation(op)
-    setExpression(expression + " " + op + " ")
-    setDisplay("0")
+ const handleOperation = (op: string) => {
+   if (!display || display === "Error") {
+     return
+   }
+
+   // Prevent multiple operators in a row
+   if (operation) {
+     setOperation(op)
+
+     setExpression(expression.replace(/\s[+\-*/]\s*$/, ` ${op} `))
+
+     return
+   }
+
+   setPreviousValue(display)
+   setOperation(op)
+   setExpression(expression + " " + op + " ")
+   setDisplay("0")
+ }
+  
+  const updateLiveResult = (currentValue: string) => {
+    if (!previousValue || !operation) {
+      setLiveResult("")
+      return
+    }
+
+    const first = Number(previousValue)
+    const second = Number(currentValue)
+
+    let result = 0
+
+    switch (operation) {
+      case "+":
+        result = first + second
+        break
+      case "-":
+        result = first - second
+        break
+      case "*":
+        result = first * second
+        break
+      case "/":
+        if (second === 0) {
+          setLiveResult("Error")
+          return
+        }
+        result = first / second
+        break
+    }
+
+    setLiveResult(String(result))
   }
 
   const handleCalculate = async () => {
+      if (!previousValue || !operation || display === "0") {
+        return
+      }
+
     try {
       const data = await calculate(
         Number(previousValue),
@@ -111,7 +174,7 @@ export default function Calculator() {
           Simple . Fast . Accurate
         </p>
         <div className='mb-6 rounded-2xl bg-gradient-to-b from-zinc-800 to-black p-6 text-right shadow-2xl'>
-          <Display expression={expression} display={display} />
+          <Display expression={expression} display={liveResult || display} />
 
           <ButtonGrid
             onButtonClick={(button) => {
