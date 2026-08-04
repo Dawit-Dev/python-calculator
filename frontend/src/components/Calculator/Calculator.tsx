@@ -29,6 +29,10 @@ export default function Calculator() {
   }, [])
 
   const handleNumber = (number: string) => {
+    if (number === "." && display.includes(".")) {
+      return
+    }
+
     if (newCalculation) {
       setDisplay(number)
       setExpression(number)
