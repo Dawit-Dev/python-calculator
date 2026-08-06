@@ -3,11 +3,13 @@ import type { CalculatorButton } from "@/types/button"
 
 type ButtonGridProps = {
   buttons: CalculatorButton[]
+  theme: "light" | "dark"
   onButtonClick: (button: string) => void
 }
 
 export default function ButtonGrid({
   buttons,
+  theme,
   onButtonClick,
 }: ButtonGridProps) {
   return (
@@ -18,6 +20,7 @@ export default function ButtonGrid({
           label={button.label}
           variant={button.variant}
           size={button.size}
+          theme={theme}
           onClick={() => onButtonClick(button.label)}
         />
       ))}

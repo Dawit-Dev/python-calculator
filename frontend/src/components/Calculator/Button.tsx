@@ -4,12 +4,22 @@ type ButtonProps = {
   label: string
   variant: ButtonVariant
   size?: "normal" | "wide" | "extraWide"
+  theme: "light" | "dark"
   onClick: () => void
 }
 
-export default function Button({ label, variant, size = "normal", onClick }: ButtonProps) {
+export default function Button({
+  label,
+  variant,
+  size = "normal",
+  theme,
+  onClick,
+}: ButtonProps) {
   const styles = {
-    number: "bg-zinc-100 text-zinc-900 hover:bg-white",
+    number:
+      theme === "dark"
+        ? "bg-zinc-600 text-white hover:bg-zinc-600 border border-zinc-600 shadow-[0_0_12px_rgba(255,255,255,0.08)]"
+        : "bg-white text-zinc-900 border border-zinc-200 hover:bg-white hover:ring-2 hover:ring-zinc-100",
 
     operator: "bg-orange-500 text-white hover:bg-orange-600",
 
@@ -40,6 +50,7 @@ export default function Button({ label, variant, size = "normal", onClick }: But
         duration-150
         hover:brightness-110
         hover:scale-105
+        hover:shadow-xl
         active:translate-y-1
         active:shadow-md
         ${styles[variant]}

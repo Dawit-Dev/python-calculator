@@ -19,6 +19,7 @@ export default function Calculator() {
   const [expression, setExpression] = useState("")
   const [newCalculation, setNewCalculation] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
+  const [theme, setTheme] = useState<"light" | "dark">("dark")
   const [liveResult, setLiveResult] = useState("")
   const [mode, setMode] = useState("standard")
 
@@ -62,26 +63,26 @@ export default function Calculator() {
     }
   }
 
- const handleOperation = (op: string) => {
-   if (!display || display === "Error") {
-     return
-   }
+  const handleOperation = (op: string) => {
+    if (!display || display === "Error") {
+      return
+    }
 
-   // Prevent multiple operators in a row
-   if (operation) {
-     setOperation(op)
+    // Prevent multiple operators in a row
+    if (operation) {
+      setOperation(op)
 
-     setExpression(expression.replace(/\s[+\-*/]\s*$/, ` ${op} `))
+      setExpression(expression.replace(/\s[+\-*/]\s*$/, ` ${op} `))
 
-     return
-   }
+      return
+    }
 
-   setPreviousValue(display)
-   setOperation(op)
-   setExpression(expression + " " + op + " ")
-   setDisplay("0")
- }
-  
+    setPreviousValue(display)
+    setOperation(op)
+    setExpression(expression + " " + op + " ")
+    setDisplay("0")
+  }
+
   const updateLiveResult = (currentValue: string) => {
     if (!previousValue || !operation) {
       setLiveResult("")
@@ -116,9 +117,9 @@ export default function Calculator() {
   }
 
   const handleCalculate = async () => {
-      if (!previousValue || !operation || display === "0") {
-        return
-      }
+    if (!previousValue || !operation || display === "0") {
+      return
+    }
 
     try {
       const data = await calculate(
@@ -142,7 +143,7 @@ export default function Calculator() {
   const handleClearHistory = async () => {
     try {
       await clearHistory()
-      
+
       setHistory([])
       setDisplay("0")
       setExpression("")
@@ -158,6 +159,10 @@ export default function Calculator() {
     setPreviousValue("")
     setOperation("")
     setExpression("")
+  }
+
+  const toggleTheme = () => {
+    setTheme((current) => (current === "dark" ? "light" : "dark"))
   }
 
   const handleBackspace = () => {
@@ -178,24 +183,75 @@ export default function Calculator() {
       : standardButtons
 
   return (
-    <main className='flex min-h-screen items-center justify-center bg-zinc-200 p-6'>
-      <div className='w-full max-w-sm'>
-        <h1 className='mb-6 text-center text-2xl font-bold text-zinc-900'>
+    <main
+      className={`
+    flex
+    min-h-screen
+    items-center
+    justify-center
+    p-6
+    transition-colors
+    duration-300
+    ${theme === "dark" ? "bg-zinc-950" : "bg-zinc-200"}
+  `}
+    >
+      <div
+        className={`w-full max-w-sm transition-colors duration-300 ${
+          theme === "dark" ? "text-white" : "text-zinc-900"
+        }`}
+      >
+        <h1
+          className={`mb-6 text-center text-2xl font-bold transition-colors duration-300 ${
+            theme === "dark" ? "text-white" : "text-zinc-900"
+          }`}
+        >
           CalcFlow
         </h1>
-        <p className='mb-6 text-center text-sm tracking-wide text-zinc-600'>
+        <p
+          className={`mb-6 text-center text-sm tracking-wide transition-colors duration-300 ${
+            theme === "dark" ? "text-zinc-300" : "text-zinc-600"
+          }`}
+        >
           Simple . Fast . Accurate
         </p>
-        <div className='mb-6 rounded-2xl bg-gradient-to-b from-zinc-800 to-black p-6 text-right shadow-2xl'>
+
+        <div
+          className={`
+    mb-6
+    rounded-2xl
+    p-6
+    text-right
+    shadow-2xl
+    transition-colors
+    duration-300
+    ${
+      theme === "dark"
+        ? `
+      bg-gradient-to-b
+      from-zinc-700
+      to-zinc-900
+      border
+      border-zinc-600
+      shadow-[0_0_35px_rgba(255,255,255,0.08)]
+    `
+        : "bg-white shadow-2xl"
+    }
+  `}
+        >
           <div className='mb-6 flex items-center justify-between'>
             <ModeSelector mode={mode} onChange={setMode} />
 
-            <ThemeToggle />
+            <ThemeToggle theme={theme} onToggle={toggleTheme} />
           </div>
-          <Display expression={expression} display={liveResult || display} />
+          <Display
+            expression={expression}
+            display={liveResult || display}
+            theme={theme}
+          />
 
           <ButtonGrid
             buttons={buttons}
+            theme={theme}
             onButtonClick={(button) => {
               if (button === "C") {
                 clear()
