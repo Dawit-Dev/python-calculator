@@ -3,7 +3,12 @@
 import { useEffect, useState } from "react"
 import Display from "./Display"
 import ButtonGrid from "./ButtonGrid"
-import { calculate, getHistory, clearHistory } from "@/lib/calculatorApi"
+import {
+  calculate,
+  getHistory,
+  addHistory,
+  clearHistory,
+} from "@/lib/calculatorApi"
 import History from "./History"
 import type { HistoryItem } from "@/types/calculator"
 import ModeSelector from "./ModeSelector"
@@ -11,12 +16,14 @@ import ThemeToggle from "./ThemeToggle"
 import { standardButtons } from "@/config/standardButtons"
 import { scientificButtons } from "@/config/scientificButtons"
 import { programmerButtons } from "@/config/programmerButtons"
+import { evaluateExpression } from "@/lib/calculatorEngine"
 
 export default function Calculator() {
   const [display, setDisplay] = useState("0")
   const [previousValue, setPreviousValue] = useState("")
   const [operation, setOperation] = useState("")
   const [expression, setExpression] = useState("")
+  const [calculationExpression, setCalculationExpression] = useState("")
   const [newCalculation, setNewCalculation] = useState(false)
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [theme, setTheme] = useState<"light" | "dark">("dark")
@@ -43,8 +50,11 @@ export default function Calculator() {
       }
 
       if (display === "0") {
+        const updatedExpression = calculationExpression + "0."
+
         setDisplay("0.")
         setExpression(expression + "0.")
+        setCalculationExpression(updatedExpression)
         return
       }
     }
@@ -52,14 +62,18 @@ export default function Calculator() {
     if (newCalculation) {
       setDisplay(number)
       setExpression(number)
+      setCalculationExpression(number)
       setNewCalculation(false)
     } else {
       const newValue = display === "0" ? number : display + number
 
+      const updatedExpression = calculationExpression + number
+
       setDisplay(newValue)
       setExpression(expression + number)
+      setCalculationExpression(updatedExpression)
 
-      updateLiveResult(newValue)
+      updateLiveResult(updatedExpression)
     }
   }
 
@@ -68,74 +82,63 @@ export default function Calculator() {
       return
     }
 
-    // Prevent multiple operators in a row
-    if (operation) {
-      setOperation(op)
+    const updatedExpression = calculationExpression + " " + op + " "
 
-      setExpression(expression.replace(/\s[+\-*/]\s*$/, ` ${op} `))
+    setCalculationExpression(updatedExpression)
 
-      return
-    }
+    setExpression(updatedExpression)
 
-    setPreviousValue(display)
-    setOperation(op)
-    setExpression(expression + " " + op + " ")
     setDisplay("0")
+    updateLiveResult(updatedExpression)
   }
 
-  const updateLiveResult = (currentValue: string) => {
-    if (!previousValue || !operation) {
+  const updateLiveResult = (currentExpression: string) => {
+    try {
+      if (!currentExpression) {
+        setLiveResult("")
+        return
+      }
+
+      const previewExpression = currentExpression.replace(/\s[+\-*/]\s*$/, "")
+
+      if (!previewExpression) {
+        setLiveResult("")
+        return
+      }
+
+      const result = evaluateExpression(previewExpression)
+
+      setLiveResult(String(result))
+    } catch {
       setLiveResult("")
-      return
     }
-
-    const first = Number(previousValue)
-    const second = Number(currentValue)
-
-    let result = 0
-
-    switch (operation) {
-      case "+":
-        result = first + second
-        break
-      case "-":
-        result = first - second
-        break
-      case "*":
-        result = first * second
-        break
-      case "/":
-        if (second === 0) {
-          setLiveResult("Error")
-          return
-        }
-        result = first / second
-        break
-    }
-
-    setLiveResult(String(result))
   }
 
   const handleCalculate = async () => {
-    if (!previousValue || !operation || display === "0") {
+    if (!calculationExpression) {
       return
     }
 
     try {
-      const data = await calculate(
-        Number(previousValue),
-        operation,
-        Number(display)
-      )
+      const result = evaluateExpression(calculationExpression)
 
-      setExpression(expression + " =")
-      setDisplay(String(data.result))
-      setPreviousValue("")
-      setOperation("")
+      const parts = calculationExpression.trim().split(" ")
+
+      if (parts.length === 3) {
+        await calculate(Number(parts[0]), parts[1], Number(parts[2]))
+      } else { 
+        await addHistory(calculationExpression, result)
+      }
+
+      setExpression(calculationExpression + " =")
+      setDisplay(String(result))
+      setCalculationExpression(String(result))
+      setLiveResult("")
       setNewCalculation(true)
 
       await loadHistory()
     } catch (error) {
+      console.error("Calculation failed:", error)
       setDisplay("Error")
     }
   }
@@ -159,6 +162,9 @@ export default function Calculator() {
     setPreviousValue("")
     setOperation("")
     setExpression("")
+    setCalculationExpression("")
+    setLiveResult("")
+    setNewCalculation(false)
   }
 
   const toggleTheme = () => {
@@ -167,11 +173,17 @@ export default function Calculator() {
 
   const handleBackspace = () => {
     const newDisplay = display.slice(0, -1)
+    const newExpression = expression.slice(0, -1)
+    const newCalculationExpression = calculationExpression.slice(0, -1)
 
     setDisplay(newDisplay || "0")
+    setExpression(newExpression)
+    setCalculationExpression(newCalculationExpression)
 
-    if (expression.length > 0) {
-      setExpression(expression.slice(0, -1))
+    if (newCalculationExpression) {
+      updateLiveResult(newCalculationExpression)
+    } else {
+      setLiveResult("")
     }
   }
 

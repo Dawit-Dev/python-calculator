@@ -71,10 +71,27 @@ def calculate(request: CalculationRequest):
         "result": result
     }
 
+ 
 @app.get("/history", response_model=List[Dict[str, Any]])
 def get_history():
     return history
 
+class HistoryRequest(BaseModel):
+    expression: str
+    result: float
+
+
+@app.post("/history")
+def add_history(request: HistoryRequest):
+    calculation = {
+        "expression": request.expression,
+        "result": request.result,
+    }
+
+    history.append(calculation)
+    save_history(history)
+
+    return calculation
 @app.delete("/history")
 def clear_history():
     history.clear()

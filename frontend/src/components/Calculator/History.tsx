@@ -3,13 +3,13 @@
 import type { HistoryItem } from "@/types/calculator"
 
 type HistoryProps = {
-    history: HistoryItem[]
-    onClearHistory: () => void
+  history: HistoryItem[]
+  onClearHistory: () => void
 }
 
 export default function History({
-    history,
-    onClearHistory,
+  history,
+  onClearHistory,
 }: HistoryProps) {
   return (
     <div className='mt-6 border-t border-zinc-700 pt-4'>
@@ -17,6 +17,7 @@ export default function History({
         <h2 className='text-sm font-semibold uppercase tracking-wide text-zinc-400'>
           History
         </h2>
+
         {history.length > 0 && (
           <button
             onClick={onClearHistory}
@@ -28,7 +29,9 @@ export default function History({
       </div>
 
       {history.length === 0 ? (
-        <p className='text-left text-sm text-zinc-500'>No calculations yet.</p>
+        <p className='text-left text-sm text-zinc-500'>
+          No calculations yet.
+        </p>
       ) : (
         <ul className='max-h-40 space-y-2 overflow-y-auto pr-1'>
           {[...history].reverse().map((item, index) => (
@@ -47,8 +50,21 @@ export default function History({
                 hover:bg-zinc-700
               '
             >
-              {item.first} {item.operation} {item.second} ={" "}
-              <span className='font-semibold text-white'>{item.result}</span>
+              {item.expression ? (
+                <>
+                  {item.expression} ={" "}
+                  <span className='font-semibold text-white'>
+                    {item.result}
+                  </span>
+                </>
+              ) : (
+                <>
+                  {item.first} {item.operation} {item.second} ={" "}
+                  <span className='font-semibold text-white'>
+                    {item.result}
+                  </span>
+                </>
+              )}
             </li>
           ))}
         </ul>

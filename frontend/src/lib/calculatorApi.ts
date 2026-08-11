@@ -46,6 +46,28 @@ export async function getHistory(): Promise<HistoryResponse> {
     return response.json()
 }
 
+export async function addHistory(
+  expression: string,
+  result: number
+) {
+  const response = await fetch(`${API_URL}/history`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      expression,
+      result,
+    }),
+  })
+
+  if (!response.ok) {
+    throw new Error("Failed to save history")
+  }
+
+  return response.json()
+}
+
 export async function clearHistory(): Promise<{ message: string }> {
     const response = await fetch(`${API_URL}/history`, {
         method: "DELETE",
