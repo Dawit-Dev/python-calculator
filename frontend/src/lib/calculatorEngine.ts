@@ -1,10 +1,36 @@
-type Operator = "+" | "-" | "*" | "/"
+type Operator = "+" | "-" | "*" | "/" | "^"
+
+type Token =
+  | { type: "number"; value: number }
+  | { type: "operator"; value: Operator }
+  | { type: "leftParen" }
+  | { type: "rightParen" }
+  | {
+      type: "function"
+      value: "sin" | "cos" | "tan" | "sqrt"
+    }
+  | { type: "constant"; value: "π" }
 
 const precedence: Record<Operator, number> = {
   "+": 1,
   "-": 1,
   "*": 2,
   "/": 2,
+  "^": 3,
+}
+
+const isDigit = (value: string) => /[0-9]/.test(value)
+
+const isLetter = (value: string) => /[a-zA-Z]/.test(value)
+
+const cleanResult = (value: number): number => {
+  if (Math.abs(value) < 1e-12) {
+    return 0
+  }
+
+  const rounded = Number(value.toPrecision(12))
+
+  return rounded
 }
 
 const applyOperation = (
@@ -28,57 +54,308 @@ const applyOperation = (
       }
 
       return first / second
+
+    case "^":
+      return Math.pow(first, second)
   }
 }
 
-export const evaluateExpression = (expression: string): number => {
-  const tokens = expression.trim().split(/\s+/)
+const applyFunction = (
+  name: "sin" | "cos" | "tan" | "sqrt",
+  value: number
+): number => {
+  switch (name) {
+    case "sin":
+      // Scientific calculators normally use degrees.
+      return Math.sin((value * Math.PI) / 180)
 
-  const values: number[] = []
-  const operators: Operator[] = []
+    case "cos":
+      return Math.cos((value * Math.PI) / 180)
 
-  const applyTopOperation = () => {
-    const operator = operators.pop()
+    case "tan":
+      return Math.tan((value * Math.PI) / 180)
 
-    if (!operator) {
-      return
-    }
+    case "sqrt":
+      if (value < 0) {
+        throw new Error("Cannot calculate square root of a negative number")
+      }
 
-    const second = values.pop()
-    const first = values.pop()
-
-    if (first === undefined || second === undefined) {
-      throw new Error("Invalid expression")
-    }
-
-    values.push(applyOperation(first, operator, second))
+      return Math.sqrt(value)
   }
+}
 
-  for (const token of tokens) {
-    if (!isNaN(Number(token))) {
-      values.push(Number(token))
+const tokenize = (expression: string): Token[] => {
+  const tokens: Token[] = []
+
+  let i = 0
+
+  while (i < expression.length) {
+    const char = expression[i]
+
+    // Ignore spaces
+    if (/\s/.test(char)) {
+      i++
       continue
     }
 
-    const operator = token as Operator
+    // Numbers, including decimals
+    if (isDigit(char) || char === ".") {
+      let number = char
+      i++
 
-    while (
-      operators.length > 0 &&
-      precedence[operators[operators.length - 1]] >= precedence[operator]
-    ) {
-      applyTopOperation()
+      while (
+        i < expression.length &&
+        (isDigit(expression[i]) || expression[i] === ".")
+      ) {
+        number += expression[i]
+        i++
+      }
+
+      const value = Number(number)
+
+      if (Number.isNaN(value)) {
+        throw new Error("Invalid number")
+      }
+
+      tokens.push({
+        type: "number",
+        value,
+      })
+
+      continue
     }
 
-    operators.push(operator)
+    // Scientific functions
+    if (isLetter(char)) {
+      let name = char
+      i++
+
+      while (i < expression.length && isLetter(expression[i])) {
+        name += expression[i]
+        i++
+      }
+
+      if (
+        name !== "sin" &&
+        name !== "cos" &&
+        name !== "tan" &&
+        name !== "sqrt"
+      ) {
+        throw new Error(`Unknown function: ${name}`)
+      }
+
+      tokens.push({
+        type: "function",
+        value: name,
+      })
+
+      continue
+    }
+
+    // Pi
+    if (char === "π") {
+      tokens.push({
+        type: "constant",
+        value: "π",
+      })
+
+      i++
+      continue
+    }
+
+    // Operators
+    if (
+      char === "+" ||
+      char === "-" ||
+      char === "*" ||
+      char === "/" ||
+      char === "^"
+    ) {
+      tokens.push({
+        type: "operator",
+        value: char,
+      })
+
+      i++
+      continue
+    }
+
+    // Parentheses
+    if (char === "(") {
+      tokens.push({
+        type: "leftParen",
+      })
+
+      i++
+      continue
+    }
+
+    if (char === ")") {
+      tokens.push({
+        type: "rightParen",
+      })
+
+      i++
+      continue
+    }
+
+    throw new Error(`Invalid character: ${char}`)
   }
 
-  while (operators.length > 0) {
-    applyTopOperation()
+  return tokens
+}
+
+export const evaluateExpression = (expression: string): number => {
+  const tokens = tokenize(expression)
+
+  let position = 0
+
+  const parseExpression = (): number => {
+    let result = parseTerm()
+
+    while (position < tokens.length) {
+      const token = tokens[position]
+
+      if (
+        token.type !== "operator" ||
+        (token.value !== "+" && token.value !== "-")
+      ) {
+        break
+      }
+
+      position++
+
+      const right = parseTerm()
+
+      result = applyOperation(result, token.value, right)
+    }
+
+    return result
   }
 
-  if (values.length !== 1) {
+  const parseTerm = (): number => {
+    let result = parsePower()
+
+    while (position < tokens.length) {
+      const token = tokens[position]
+
+      if (
+        token.type !== "operator" ||
+        (token.value !== "*" && token.value !== "/")
+      ) {
+        break
+      }
+
+      position++
+
+      const right = parsePower()
+
+      result = applyOperation(result, token.value, right)
+    }
+
+    return result
+  }
+
+  const parsePower = (): number => {
+    let result = parseUnary()
+
+    const token = tokens[position]
+
+    if (token && token.type === "operator" && token.value === "^") {
+      position++
+
+      const right = parsePower()
+
+      result = applyOperation(result, "^", right)
+    }
+
+    return result
+  }
+
+  const parseUnary = (): number => {
+    if (position >= tokens.length) {
+      throw new Error("Invalid expression")
+    }
+
+    const token = tokens[position]
+
+    // Negative number / unary minus
+    if (token.type === "operator" && token.value === "-") {
+      position++
+
+      return -parseUnary()
+    }
+
+    // Positive number / unary plus
+    if (token.type === "operator" && token.value === "+") {
+      position++
+
+      return parseUnary()
+    }
+
+    // Number
+    if (token.type === "number") {
+      position++
+
+      return token.value
+    }
+
+    // Pi
+    if (token.type === "constant") {
+      position++
+
+      return Math.PI
+    }
+
+    // Parentheses
+    if (token.type === "leftParen") {
+      position++
+
+      const result = parseExpression()
+
+      if (position >= tokens.length || tokens[position].type !== "rightParen") {
+        throw new Error("Missing closing parenthesis")
+      }
+
+      position++
+
+      return result
+    }
+
+    // Scientific functions
+    if (token.type === "function") {
+      position++
+
+      if (position >= tokens.length || tokens[position].type !== "leftParen") {
+        throw new Error(`Expected '(' after ${token.value}`)
+      }
+
+      position++
+
+      const value = parseExpression()
+
+      if (position >= tokens.length || tokens[position].type !== "rightParen") {
+        throw new Error(`Missing ')' after ${token.value}`)
+      }
+
+      position++
+
+      return applyFunction(token.value, value)
+    }
+
     throw new Error("Invalid expression")
   }
 
-  return values[0]
+  const result = parseExpression()
+
+  if (position !== tokens.length) {
+    throw new Error("Invalid expression")
+  }
+
+ if (!Number.isFinite(result)) {
+   throw new Error("Invalid result")
+ }
+
+ return cleanResult(result)
+
 }

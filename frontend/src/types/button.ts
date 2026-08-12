@@ -1,6 +1,7 @@
 export type ButtonVariant =
   | "number"
   | "operator"
+  | "scientific"
   | "action"
   | "equals"
   | "backspace"

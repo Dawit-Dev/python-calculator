@@ -23,6 +23,11 @@ export default function Button({
 
     operator: "bg-orange-500 text-white hover:bg-orange-600",
 
+    scientific:
+      theme === "dark"
+        ? "bg-zinc-500 text-white hover:bg-zinc-400 border border-zinc-500"
+        : "bg-zinc-100 text-zinc-900 border border-zinc-200 hover:bg-zinc-200",
+
     action: "bg-red-500 text-white hover:bg-red-600",
 
     backspace: "bg-purple-500 text-white hover:bg-purple-600",
