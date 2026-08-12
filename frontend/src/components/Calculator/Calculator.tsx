@@ -154,8 +154,6 @@ export default function Calculator() {
     updateLiveResult(updatedExpression)
   }
 
-   
-
   const handleFunction = (functionName: "sin" | "cos" | "tan" | "sqrt") => {
     const displayFunction =
       functionName === "sqrt" ? "sqrt(" : `${functionName}(`
@@ -295,14 +293,6 @@ export default function Calculator() {
 
     if (["+", "-", "*", "/"].includes(button)) {
       handleOperation(button)
-      return
-    }
-
-    if (
-      mode === "scientific" &&
-      ["sin", "cos", "tan", "√", "π", "^", "(", ")"].includes(button)
-    ) {
-      handleScientificButton(button)
       return
     }
 
