@@ -50,19 +50,31 @@ export default function Calculator() {
         return
       }
 
-      // Don't try to evaluate an expression that ends with an operator.
-      const previewExpression = currentExpression.replace(/\s[+\-*/^]\s*$/, "")
+      let previewExpression = currentExpression.replace(/\s[+\-*/^]\s*$/, "")
 
       if (!previewExpression.trim()) {
         setLiveResult("")
         return
       }
 
+      // Temporarily close incomplete function/parenthesis expressions
+      // for the live preview only.
+      const openParentheses = (previewExpression.match(/\(/g) || []).length
+
+      const closeParentheses = (previewExpression.match(/\)/g) || []).length
+
+      if (openParentheses > closeParentheses) {
+        previewExpression += ")".repeat(openParentheses - closeParentheses)
+      }
+
       const result = evaluateExpression(previewExpression)
+
+      console.log("LIVE EXPRESSION:", previewExpression)
+      console.log("LIVE RESULT:", result)
 
       setLiveResult(String(result))
     } catch {
-      // An incomplete expression is normal while typing.
+      // Incomplete expressions are normal while typing.
       setLiveResult("")
     }
   }
@@ -154,9 +166,10 @@ export default function Calculator() {
     updateLiveResult(updatedExpression)
   }
 
-  const handleFunction = (functionName: "sin" | "cos" | "tan" | "sqrt") => {
-    const displayFunction =
-      functionName === "sqrt" ? "sqrt(" : `${functionName}(`
+  const handleFunction = (
+    functionName: "sin" | "cos" | "tan" | "sqrt" | "ln" | "log"
+  ) => {
+    const displayFunction = `${functionName}(`
 
     const baseExpression = newCalculation ? "" : calculationExpression
 
@@ -167,6 +180,8 @@ export default function Calculator() {
     setDisplay("0")
     setLiveResult("")
     setNewCalculation(false)
+
+    updateLiveResult(updatedExpression)
   }
 
   const handleParenthesis = (parenthesis: "(" | ")") => {
@@ -182,12 +197,14 @@ export default function Calculator() {
     updateLiveResult(updatedExpression)
   }
 
-  const handleConstant = (constant: "π") => {
-    const updatedExpression = calculationExpression + constant
+  const handleConstant = (constant: "π" | "e") => {
+    const baseExpression = newCalculation ? "" : calculationExpression
+
+    const updatedExpression = baseExpression + constant
 
     setCalculationExpression(updatedExpression)
     setExpression(updatedExpression)
-    setDisplay(constant)
+    setNewCalculation(false)
 
     updateLiveResult(updatedExpression)
   }
@@ -291,14 +308,43 @@ export default function Calculator() {
       return
     }
 
-    if (["+", "-", "*", "/"].includes(button)) {
+    if (["+", "-", "*", "/", "^"].includes(button)) {
       handleOperation(button)
+      return
+    }
+
+    if (["sin", "cos", "tan"].includes(button)) {
+      handleFunction(button as "sin" | "cos" | "tan")
+      return
+    }
+
+    if (button === "√") {
+      handleFunction("sqrt")
+      return
+    }
+
+    if (["ln", "log"].includes(button)) {
+      handleFunction(button as "ln" | "log")
+      return
+    }
+
+    if (button === "(" || button === ")") {
+      handleParenthesis(button)
+      return
+    }
+
+    if (button === "π" || button === "e") {
+      handleConstant(button)
+      return
+    }
+
+    if (button === "!" || button === "%") {
+      handlePostfix(button)
       return
     }
 
     handleNumber(button)
   }
-
   const buttons =
     mode === "scientific"
       ? scientificButtons
@@ -378,27 +424,7 @@ export default function Calculator() {
           <ButtonGrid
             buttons={buttons}
             theme={theme}
-            onButtonClick={(button) => {
-              if (button === "C") {
-                clear()
-              } else if (button === "⌫") {
-                handleBackspace()
-              } else if (button === "=") {
-                handleCalculate()
-              } else if (["+", "-", "*", "/", "^"].includes(button)) {
-                handleOperation(button)
-              } else if (["sin", "cos", "tan"].includes(button)) {
-                handleFunction(button as "sin" | "cos" | "tan")
-              } else if (button === "√") {
-                handleFunction("sqrt")
-              } else if (button === "(" || button === ")") {
-                handleParenthesis(button)
-              } else if (button === "π") {
-                handleConstant("π")
-              } else {
-                handleNumber(button)
-              }
-            }}
+            onButtonClick={handleButtonClick}
           />
 
           <History history={history} onClearHistory={handleClearHistory} />

@@ -1,15 +1,16 @@
 type Operator = "+" | "-" | "*" | "/" | "^"
 
+type FunctionName = "sin" | "cos" | "tan" | "sqrt" | "ln" | "log"
+
 type Token =
   | { type: "number"; value: number }
   | { type: "operator"; value: Operator }
   | { type: "leftParen" }
   | { type: "rightParen" }
-  | {
-      type: "function"
-      value: "sin" | "cos" | "tan" | "sqrt"
-    }
-  | { type: "constant"; value: "π" }
+  | { type: "function"; value: FunctionName }
+  | { type: "constant"; value: "π" | "e" }
+  | { type: "factorial" }
+  | { type: "percent" }
 
 const precedence: Record<Operator, number> = {
   "+": 1,
@@ -28,9 +29,7 @@ const cleanResult = (value: number): number => {
     return 0
   }
 
-  const rounded = Number(value.toPrecision(12))
-
-  return rounded
+  return Number(value.toPrecision(12))
 }
 
 const applyOperation = (
@@ -60,13 +59,9 @@ const applyOperation = (
   }
 }
 
-const applyFunction = (
-  name: "sin" | "cos" | "tan" | "sqrt",
-  value: number
-): number => {
+const applyFunction = (name: FunctionName, value: number): number => {
   switch (name) {
     case "sin":
-      // Scientific calculators normally use degrees.
       return Math.sin((value * Math.PI) / 180)
 
     case "cos":
@@ -81,7 +76,39 @@ const applyFunction = (
       }
 
       return Math.sqrt(value)
+
+    case "ln":
+      if (value <= 0) {
+        throw new Error("Natural logarithm requires a positive number")
+      }
+
+      return Math.log(value)
+
+    case "log":
+      if (value <= 0) {
+        throw new Error("Logarithm requires a positive number")
+      }
+
+      return Math.log10(value)
   }
+}
+
+const calculateFactorial = (value: number): number => {
+  if (!Number.isInteger(value)) {
+    throw new Error("Factorial requires a whole number")
+  }
+
+  if (value < 0) {
+    throw new Error("Factorial cannot be negative")
+  }
+
+  let result = 1
+
+  for (let number = 2; number <= value; number++) {
+    result *= number
+  }
+
+  return result
 }
 
 const tokenize = (expression: string): Token[] => {
@@ -125,6 +152,17 @@ const tokenize = (expression: string): Token[] => {
       continue
     }
 
+    // Constants
+    if (char === "π" || char === "e") {
+      tokens.push({
+        type: "constant",
+        value: char,
+      })
+
+      i++
+      continue
+    }
+
     // Scientific functions
     if (isLetter(char)) {
       let name = char
@@ -139,7 +177,9 @@ const tokenize = (expression: string): Token[] => {
         name !== "sin" &&
         name !== "cos" &&
         name !== "tan" &&
-        name !== "sqrt"
+        name !== "sqrt" &&
+        name !== "ln" &&
+        name !== "log"
       ) {
         throw new Error(`Unknown function: ${name}`)
       }
@@ -152,11 +192,31 @@ const tokenize = (expression: string): Token[] => {
       continue
     }
 
-    // Pi
-    if (char === "π") {
+    // Constants
+    if (char === "π" || char === "e") {
       tokens.push({
         type: "constant",
-        value: "π",
+        value: char,
+      })
+
+      i++
+      continue
+    }
+
+    // Factorial
+    if (char === "!") {
+      tokens.push({
+        type: "factorial",
+      })
+
+      i++
+      continue
+    }
+
+    // Percentage
+    if (char === "%") {
+      tokens.push({
+        type: "percent",
       })
 
       i++
@@ -282,48 +342,45 @@ export const evaluateExpression = (expression: string): number => {
     // Negative number / unary minus
     if (token.type === "operator" && token.value === "-") {
       position++
-
       return -parseUnary()
     }
 
     // Positive number / unary plus
     if (token.type === "operator" && token.value === "+") {
       position++
-
       return parseUnary()
     }
+
+    let result: number
 
     // Number
     if (token.type === "number") {
       position++
-
-      return token.value
+      result = token.value
     }
 
-    // Pi
-    if (token.type === "constant") {
+    // Constants
+    else if (token.type === "constant") {
       position++
 
-      return Math.PI
+      result = token.value === "π" ? Math.PI : Math.E
     }
 
     // Parentheses
-    if (token.type === "leftParen") {
+    else if (token.type === "leftParen") {
       position++
 
-      const result = parseExpression()
+      result = parseExpression()
 
       if (position >= tokens.length || tokens[position].type !== "rightParen") {
         throw new Error("Missing closing parenthesis")
       }
 
       position++
-
-      return result
     }
 
     // Scientific functions
-    if (token.type === "function") {
+    else if (token.type === "function") {
       position++
 
       if (position >= tokens.length || tokens[position].type !== "leftParen") {
@@ -340,10 +397,31 @@ export const evaluateExpression = (expression: string): number => {
 
       position++
 
-      return applyFunction(token.value, value)
+      result = applyFunction(token.value, value)
+    } else {
+      throw new Error("Invalid expression")
     }
 
-    throw new Error("Invalid expression")
+    // Postfix operations: factorial and percentage
+    while (position < tokens.length) {
+      const postfixToken = tokens[position]
+
+      if (postfixToken.type === "factorial") {
+        position++
+        result = calculateFactorial(result)
+        continue
+      }
+
+      if (postfixToken.type === "percent") {
+        position++
+        result = result / 100
+        continue
+      }
+
+      break
+    }
+
+    return result
   }
 
   const result = parseExpression()
@@ -352,10 +430,9 @@ export const evaluateExpression = (expression: string): number => {
     throw new Error("Invalid expression")
   }
 
- if (!Number.isFinite(result)) {
-   throw new Error("Invalid result")
- }
+  if (!Number.isFinite(result)) {
+    throw new Error("Invalid result")
+  }
 
- return cleanResult(result)
-
+  return cleanResult(result)
 }

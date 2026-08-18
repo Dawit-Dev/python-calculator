@@ -4,11 +4,7 @@ type DisplayProps = {
   theme: "light" | "dark"
 }
 
-export default function Display({
-  expression,
-  display,
-  theme,
-}: DisplayProps) {
+export default function Display({ expression, display, theme }: DisplayProps) {
   return (
     <div
       className={`
@@ -28,25 +24,34 @@ export default function Display({
     >
       <div
         className={`
-    min-h-8
-    text-lg
-    font-medium
-    tracking-wide
-    ${theme === "dark" ? "text-zinc-400" : "text-zinc-500"}
-  `}
-      >
+            min-h-8
+            text-lg
+            font-medium
+            tracking-wide
+            ${theme === "dark" ? "text-zinc-400" : "text-zinc-500"}
+          `}
+              >
         {expression}
       </div>
 
       <div
         className={`
-    mb-3
-    text-6xl
-    font-extrabold
-    tracking-tight
-    ${theme === "dark" ? "text-white" : "text-zinc-900"}
-  `}
-      >
+            mb-3
+            min-w-0
+            overflow-hidden
+            whitespace-nowrap
+            font-extrabold
+            tracking-tight
+            ${
+              display.length > 12
+                ? "text-4xl"
+                : display.length > 9
+                ? "text-5xl"
+                : "text-6xl"
+            }
+            ${theme === "dark" ? "text-white" : "text-zinc-900"}
+          `}
+              >
         {display}
       </div>
     </div>
